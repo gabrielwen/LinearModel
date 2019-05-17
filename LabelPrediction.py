@@ -51,4 +51,4 @@ class LabelPrediction(object):
     X = features.to_numpy()[0][1:]
     logging.info('X: %s', str(X))
 
-    return self.m * X + self.b
+    return sum(self.m * X) + self.b
