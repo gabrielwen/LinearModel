@@ -1,4 +1,5 @@
 fire
+feast
 gitpython
 google-cloud-storage
 pandas
