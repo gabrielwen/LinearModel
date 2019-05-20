@@ -34,9 +34,12 @@ def deploy(registry, base_image, serving_label=None):
                         os.path.join(context_dir, name))
         input_files.append(name)
 
+  current_dir = os.getcwd()
   os.chdir(context_dir)
   fairing.config.set_preprocessor('python', input_files=input_files)
-  return fairing.config.run()
+  result = fairing.config.run()
+  os.chdir(current_dir)
+  return result
 
 if __name__ == '__main__':
   logging.getLogger().setLevel(logging.INFO)
