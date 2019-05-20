@@ -1,0 +1,11 @@
+fire
+feast
+gitpython
+google-cloud-storage
+pandas
+joblib
+numpy
+retrying
+sklearn
+seldon-core
+xgboost
