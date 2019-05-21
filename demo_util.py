@@ -13,7 +13,7 @@ from kubernetes import client, config
 def notebook_setup():
     # Install some pip pckages
     # Install the SDK
-    for p in ["feast", "retrying"]:
+    for p in ["feast", "retrying", "tensorflow", "tensorflow_data_validation"]:
         subprocess.check_call(["pip3", "install", p])
         
     fairing_code = os.path.join(Path.home(), "LinearModel", "fairing")

@@ -43,6 +43,8 @@ from feast.sdk.client import Client
 
 # ## Retrieve a Training Set from Feast
 
+# ## Visualize statistics with TFDV
+
 # ## Train Linear Model
 
 # fairing:include-cell
@@ -135,13 +137,13 @@ class TaxiRideModel(object):
     with open(model_path, 'w+') as f:
         json.dump(model, f)
 
-# ## Use fairing to build the docker image
-# 
-# * This uses the append builder to rapidly build docker images
+# ## Save the model
 
 # ## Local Prediction
 
-# ## Save the model
+# ## Use fairing to build the docker image
+# 
+# * This uses the append builder to rapidly build docker images
 
 # ## Deploy with Kubeflow
 
