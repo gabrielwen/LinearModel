@@ -130,19 +130,19 @@ class HousingModel(object):
     with open(model_path, 'w+') as f:
         json.dump(model, f)
 
+# ## Train Locally 
+
+# ## Local Prediction
+
 # ## Use fairing to build the docker image
 # 
 # * This uses the append builder to rapidly build docker images
-
-# ## Local Prediction
 
 # ## Save the model
 
 # ## Deploy with Kubeflow
 
 # ## Call the prediction endpoint
-
-# ## Serving with Kubeflow
 
 
 if __name__ == "__main__":
