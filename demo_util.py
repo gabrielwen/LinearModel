@@ -1,10 +1,13 @@
+from google.cloud import storage
 from pathlib import Path
 # Get some project config information
 import json
+import joblib
 import re
 
 import logging
 import os
+import re
 import subprocess
 import sys
 
@@ -49,19 +52,77 @@ def get_project_config():
     ZONE = config['zone']
     return PROJECT, ZONE, APP_NAME
 
+def save_proto(data, path):
+    """Save proto"""
+    local_path = path
+    
+    is_gcs = False
+    if path.startswith("gs://"):
+        is_gcs = True
+        local_path = "/tmp/" + os.path.basename(path)
+    
+    logging.info("Saving proto to %s", local_path)
+    with open(local_path, "wb") as hf:
+        hf.write(data.SerializeToString())
+    if is_gcs:
+        bucket_name, obj_path = split_gcs_uri(path)
+        storage_client = storage.Client()
+        bucket = storage_client.get_bucket(bucket_name)   
+        blob = bucket.blob(obj_path)
+    
+        logging.info("Uploading proto to %s", path)
+        blob.upload_from_filename(local_path)
 
-def get_fairing_endpoint(serving_label):
-    config.load_kube_config()
-    c = client.Configuration()
-    client.Configuration.set_default(c)
+    logging.info("Saved proto to %s", path)
 
-    v1 = client.CoreV1Api()
-    body = client.V1Service()
-    label_selector = 'serving=%s' % serving_label
-    resp = v1.list_service_for_all_namespaces(label_selector=label_selector)
+def save_df(df, path, key):
+    local_path = path
+    
+    is_gcs = False
+    if path.startswith("gs://"):
+        is_gcs = True
+        local_path = "/tmp/" + os.path.basename(path)
+    
+    df.to_hdf(local_path, key)
+    logging.info("Saving DataFrame to %s; key %s", local_path, key)
+    if is_gcs:
+        bucket_name, obj_path = split_gcs_uri(path)
+        storage_client = storage.Client()
+        bucket = storage_client.get_bucket(bucket_name)   
+        blob = bucket.blob(obj_path)
+    
+        logging.info("Uploading dataframe to %s", path)
+        blob.upload_from_filename(local_path)
+        
+def save_as_json(data, model_file):    
+    gcs_path = None
+    if model_file.startswith("gs://"):
+        gcs_path = model_file        
+        model_file = "/tmp/" + os.path.basename(model_file)
 
-    service_name = resp.items[0].metadata.name
-    namespace = resp.items[0].metadata.namespace
 
-    print('fairing service: {0}/{1}'.format(namespace, service_name))
-    return namespace, service_name
+    logging.info("Saving data to: %s", model_file)
+    
+    with open(model_file, 'w+') as f:
+        json.dump(data, f)
+        
+    if gcs_path:
+        model_bucket_name, model_path = split_gcs_uri(gcs_path)
+        storage_client = storage.Client()
+        model_bucket = storage_client.get_bucket(model_bucket_name)   
+        model_blob = model_bucket.blob(model_path)
+    
+        logging.info("Uploading data to %s", gcs_path)
+        model_blob.upload_from_filename(model_file)
+        
+
+def split_gcs_uri(gcs_uri):
+    """Split a GCS URI into bucket and path."""
+    GCS_REGEX = re.compile("gs://([^/]*)(/.*)?")
+    m = GCS_REGEX.match(gcs_uri)
+    bucket = m.group(1)
+    path = ""
+    if m.group(2):
+        path = m.group(2).lstrip("/")
+    return bucket, path
+       
