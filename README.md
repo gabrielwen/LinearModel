@@ -1,5 +1,9 @@
 # Simple example to use Kubeflow for model training and deployments.
 
+This directory provides an example of using [Feast](https://github.com/gojek/feast), Kubeflow, and [TFX Tensorflow Datavalidation](https://www.tensorflow.org/tfx/data_validation/get_started).
+
+Use the notebook feast-taxi-job.ipynb.
+
 ## Deploy Kubeflow cluster
 1. Download `kfctl` CLI (v0.5.1) from [kubeflow release](https://github.com/kubeflow/kubeflow/releases)
 1. Run the following command to deploy Kubeflow:
