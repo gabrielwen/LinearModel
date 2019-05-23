@@ -16,6 +16,11 @@
 from google.cloud import storage
 import datetime
 import demo_util
+import kfp
+import kfp.components as comp
+import kfp.gcp as gcp
+import kfp.dsl as dsl
+import kfp.compiler as compiler
 import sys
 import importlib
 import uuid
@@ -198,6 +203,12 @@ class TaxiRideModel(TaxiFeast):
     logging.info('Saving model to %s', model_path)
 
     demo_util.save_as_json(model, model_path)
+  
+  def preprocess(self):
+    pass
+
+  def validate(self):
+    pass
 
 # ## Train Locally
 
@@ -214,6 +225,8 @@ class TaxiRideModel(TaxiFeast):
 # ## Deploy with Kubeflow
 
 # ## Call the prediction endpoint
+
+# ## Pipelines
 
 
 if __name__ == "__main__":
